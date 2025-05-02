@@ -29,7 +29,7 @@ func main() {
 	flag.BoolVar(&help, "h", false, "Print this message and exit.")
 
 	var ver bool
-	flag.BoolVar(&ver, "v", false, "Print the version number of sizesoci and exit.")
+	flag.BoolVar(&ver, "v", false, "Print the version number of sizeoci and exit.")
 
 	flag.Parse()
 
