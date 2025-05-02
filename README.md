@@ -2,6 +2,8 @@
 
 Replicate `oras manifest fetch | jq '[.layers[].size] | add' | awk ...` in a simple Go CLI.
 
+![demo](https://github.com/user-attachments/assets/20dd9a55-1b09-4c57-840a-0833307096d8)
+
 ```bash
 go install github.com/noxsios/sizeoci@latest
 ```
