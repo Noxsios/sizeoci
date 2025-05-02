@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2025-Present Harry Randazzo
+
+// Package main is the entrypoint for the sizeoci CLI
 package main
 
 import (
