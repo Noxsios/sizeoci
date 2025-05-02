@@ -8,7 +8,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log/slog"
 	"os"
 	"os/signal"
 	"runtime"
@@ -17,7 +16,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/charmbracelet/log"
 	"github.com/defenseunicorns/pkg/oci"
 	"github.com/dustin/go-humanize"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
@@ -50,18 +48,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	logger := log.NewWithOptions(os.Stderr, log.Options{
-		Level:           log.DebugLevel,
-		ReportTimestamp: false,
-	})
-
 	if len(flag.Args()) > 1 || len(flag.Args()) == 0 {
-		logger.Fatal(fmt.Errorf("invalid number of args: want 1, got %d", len(flag.Args())))
+		fatal(fmt.Errorf("invalid number of args: want 1, got %d", len(flag.Args())))
 	}
 
 	targetPlatform, err := parsePlatform(platform)
 	if err != nil {
-		logger.Fatal(err)
+		fatal(err)
 	}
 
 	ctx := context.Background()
@@ -69,19 +62,24 @@ func main() {
 	defer cancel()
 
 	distributionReference := flag.Args()[0]
-	client, err := oci.NewOrasRemote(distributionReference, targetPlatform, oci.WithLogger(slog.New(logger)))
+	client, err := oci.NewOrasRemote(distributionReference, targetPlatform)
 	if err != nil {
-		logger.Fatal(err)
+		fatal(err)
 	}
 
 	root, err := client.FetchRoot(ctx)
 	if err != nil {
-		logger.Fatal(err)
+		fatal(err)
 	}
 
 	total := oci.SumDescsSize(root.Layers)
 
-	logger.Info(distributionReference, "size", humanize.Bytes(uint64(total)))
+	fmt.Println(humanize.Bytes(uint64(total)))
+}
+
+func fatal(err error) {
+	fmt.Fprintln(os.Stderr, err.Error())
+	os.Exit(1)
 }
 
 // https://github.com/oras-project/oras/blob/main/cmd/oras/internal/option/platform.go#L43
